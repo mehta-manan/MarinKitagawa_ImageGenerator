@@ -1,0 +1,269 @@
+{
+  "info": {
+    "_postman_id": "594a8b57-9acc-4646-9a9f-c7de955bea1e",
+    "name": "APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38031747"
+  },
+  "item": [
+    {
+      "name": "Tags",
+      "item": [
+        {
+          "name": "Tags",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{JWT}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{PROTOCOL}}://{{HOST}}:{{PORT}}/api/v2/tags",
+              "protocol": "{{PROTOCOL}}",
+              "host": [
+                "{{HOST}}"
+              ],
+              "port": "{{PORT}}",
+              "path": [
+                "api",
+                "v2",
+                "tags"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Sign up",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": \"\",\r\n    \"first_name\": \"\",\r\n    \"last_name\": \"\",\r\n    \"age\": \"\",\r\n    \"email\": \"\",\r\n    \"password\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{PROTOCOL}}://{{HOST}}:{{PORT}}/api/v2/auth/signup",
+              "protocol": "{{PROTOCOL}}",
+              "host": [
+                "{{HOST}}"
+              ],
+              "port": "{{PORT}}",
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign in",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": \"\",\r\n    \"password\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{PROTOCOL}}://{{HOST}}:{{PORT}}/api/v2/auth/signin",
+              "protocol": "{{PROTOCOL}}",
+              "host": [
+                "{{HOST}}"
+              ],
+              "port": "{{PORT}}",
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "signin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify JWT",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{JWT}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{PROTOCOL}}://{{HOST}}:{{PORT}}/api/v2/auth/verify",
+              "protocol": "{{PROTOCOL}}",
+              "host": [
+                "{{HOST}}"
+              ],
+              "port": "{{PORT}}",
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{JWT}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{PROTOCOL}}://{{HOST}}:{{PORT}}/api/v2/user",
+              "protocol": "{{PROTOCOL}}",
+              "host": [
+                "{{HOST}}"
+              ],
+              "port": "{{PORT}}",
+              "path": [
+                "api",
+                "v2",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {
+          "name": "Images",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{JWT}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{PROTOCOL}}://{{HOST}}:{{PORT}}/api/v2/images/?page_num=2&page_size=6",
+              "protocol": "{{PROTOCOL}}",
+              "host": [
+                "{{HOST}}"
+              ],
+              "port": "{{PORT}}",
+              "path": [
+                "api",
+                "v2",
+                "images",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page_num",
+                  "value": "2"
+                },
+                {
+                  "key": "page_size",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{JWT}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"seed\" : 0,\r\n    \"tags\" : \"best quality, masterpiece, 1girl, solo, looking at viewer, long hair, blush, smile, upper body, detailed background, outdoors, sunlight\",\r\n    \"type\" : \"http\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{PROTOCOL}}://{{HOST}}:{{PORT}}/api/v2/images/generate",
+              "protocol": "{{PROTOCOL}}",
+              "host": [
+                "{{HOST}}"
+              ],
+              "port": "{{PORT}}",
+              "path": [
+                "api",
+                "v2",
+                "images",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

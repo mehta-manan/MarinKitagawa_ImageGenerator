@@ -1,0 +1,103 @@
+{
+  "info": {
+    "_postman_id": "0878061e-5881-441f-9bf9-93aea2024d7c",
+    "name": "ComfyUI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38031747"
+  },
+  "item": [
+    {
+      "name": "Queue Prompt",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"payload\": \"<workflow>\",\r\n    \"prompt_id\": \"<prompt_id>\",\r\n    \"client_id\": \"<client_id>\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{PROTOCOL}}://{{HOST}}:{{COMFYUI_PORT}}/prompt",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{HOST}}"
+          ],
+          "port": "{{COMFYUI_PORT}}",
+          "path": [
+            "prompt"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get History",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{PROTOCOL}}://{{HOST}}:{{COMFYUI_PORT}}/history/<prompt_id>",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{HOST}}"
+          ],
+          "port": "{{COMFYUI_PORT}}",
+          "path": [
+            "history",
+            "<prompt_id>"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Image",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{PROTOCOL}}://{{HOST}}:{{COMFYUI_PORT}}/view?filename&subfolder&type",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{HOST}}"
+          ],
+          "port": "{{COMFYUI_PORT}}",
+          "path": [
+            "view"
+          ],
+          "query": [
+            {
+              "key": "filename",
+              "value": null,
+              "type": "text"
+            },
+            {
+              "key": "subfolder",
+              "value": null,
+              "type": "text"
+            },
+            {
+              "key": "type",
+              "value": null,
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
