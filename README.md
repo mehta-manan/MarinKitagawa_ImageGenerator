@@ -14,6 +14,16 @@ The generator uses a **LoRA** trained by me, available both on GitHub and CivitA
 
 Backend source: [backend_FastAPI](https://github.com/mehta-manan/MarinKitagawa_ImageGenerator/tree/main/backend_FastAPI)
 
+**Example Generations**
+
+<p align="center">
+  <img src="./assets/marin_1.webp" width="180" alt="Marin Kitagawa example 1" />
+  <img src="./assets/marin_2.webp" width="180" alt="Marin Kitagawa example 2" />
+  <img src="./assets/marin_3.webp" width="180" alt="Marin Kitagawa example 3" />
+  <img src="./assets/marin_4.webp" width="180" alt="Marin Kitagawa example 4" />
+  <img src="./assets/marin_5.webp" width="180" alt="Marin Kitagawa example 5" />
+</p>
+
 ---
 
 ## 🆕 What's New (v2)
@@ -50,6 +60,10 @@ flowchart LR
     SMTP -- "Send image to user via email" --> User
 ```
 
+<p align="center">
+  <img src="./assets/MKv2.drawio.png" width="700" alt="Architecture diagram" />
+</p>
+
 **Components**
 
 | Component | Role |
@@ -62,6 +76,31 @@ flowchart LR
 | **Google SMTP Server** | Delivers generated images to the user via email |
 
 FastAPI talks to ComfyUI two ways: **(A) HTTP polling** to check generation status, and **(B) Websocket** for real-time updates from ComfyUI back to FastAPI.
+
+---
+
+## ⚙️ How ComfyUI Works Under the Hood
+
+ComfyUI isn't just the node-based canvas UI — every instance also runs an `aiohttp` HTTP + Websocket server (default `127.0.0.1:8188`) that the UI itself talks to. The backend exposes this same API to any external client, which is exactly how this project's FastAPI server drives image generation without a human touching the ComfyUI canvas.
+
+**Key endpoints this project relies on:**
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/prompt` | `POST` | Submits a workflow (in **API JSON format**, exported via ComfyUI's "Save (API format)") for execution. Returns a `prompt_id` (plus queue position) on success, or `node_errors` on validation failure. |
+| `/history/{prompt_id}` | `GET` | Returns the **prompt history** — the queued/completed status and outputs for a specific `prompt_id`. This is what the backend polls (or checks after a websocket "done" event) to know a generation finished and to get the output filenames. |
+| `/history` | `GET` | Returns the history for all recent prompts, useful for auditing or recovering state after a restart. |
+| `/view` | `GET` | Given a `filename`, `subfolder`, and `type` (`input`, `output`, or `temp`), returns the raw image bytes so they can be downloaded and re-uploaded to S3. |
+| `/ws` | `WebSocket` | Real-time channel that emits `status`, `executing`, and `progress` events as ComfyUI works through the queued workflow. |
+
+### Two ways this project gets images back
+
+Once a workflow is submitted to `/prompt`, ComfyUI runs it asynchronously — the request returns immediately with a `prompt_id`, and the actual generation happens in the background. There are two complementary ways to find out when it's done and fetch the result, and this project uses both:
+
+1. **(A) HTTP polling of `/history/{prompt_id}`** — the backend repeatedly calls `GET /history/{prompt_id}` on an interval until the response contains outputs for that prompt. This is simple and stateless, but adds polling latency and unnecessary requests while a generation is still running.
+2. **(B) Websocket subscription via `/ws`** — the backend opens a persistent websocket connection (tagged with a `client_id`) and listens for `executing` / `status` messages. When ComfyUI sends an event indicating the given `prompt_id` has finished, the backend knows immediately, without polling, and only then calls `/history/{prompt_id}` once to pull the final output filenames.
+
+In both cases, once the output `filename`/`subfolder`/`type` are known (from `/history`), the backend calls `GET /view` to download the raw image bytes, which are then streamed up to **Amazon S3**, with the resulting URL and metadata written to **MongoDB**.
 
 ---
 
@@ -102,8 +141,6 @@ pip install -r requirements.txt
 **4. Configure environment variables**
 Create a `.env` file:
 ```bash
-PORT=8000
-
 # MongoDB
 DB_USER=
 DB_PASS=
@@ -176,15 +213,14 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 ### Python (FastAPI backend)
 - **fastapi** – API server / routing
-- **uvicorn** – ASGI server
 - **asyncio** – async event loop powering non-blocking `BackgroundTasks`, HTTP polling to ComfyUI, and DB calls
 - **pydantic** – request/response validation
-- **motor / pymongo** – MongoDB access (motor for async, non-blocking queries)
-- **python-jose / pyjwt** – JWT creation & validation
-- **passlib[bcrypt]** – password hashing
+- **pymongo** – MongoDB access
+- **pyjwt** – JWT creation & validation
+- **pwdlib[argon2]** – password hashing
 - **boto3** – Amazon S3 client for uploading generated images & generating URLs
 - **smtplib** (standard library) – sends generated-image notification emails via Gmail SMTP
-- **websockets / httpx** – async HTTP polling and Websocket communication with ComfyUI
+- **websockets** – async Websocket communication with ComfyUI
 - **python-dotenv** – environment variable handling
 
 ### External
